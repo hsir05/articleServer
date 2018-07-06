@@ -8,10 +8,10 @@ const userSchema = new Schema ({
 })
 
 const articleSchema = new Schema({
-  title:String,
-  content: String,
+  title:{type:String},
+  content: {type:String},
   create_at:{type: Date, default: Date.now},
-  auth: String
+  auth: {type:String}
 })
 
 mongoose.Promise = global.Promise;
