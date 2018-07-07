@@ -5,40 +5,33 @@ const db = require('../db')
 router.get('/api/article', function(req, res, next) {
   db.articleModel.find({}, (err, doc) => {
     if (err) {
-      console.log(err);
+      console.log(err)
+      res.json({msg:err,status:'0'})
     } else {
-      res.json({
-        code: 200,
-        status:'0',
-        msg:'success',
-        data:doc
-      })
+      res.json({status:'0',msg:'success',data:doc})
     }
   })
 })
 
 router.post('/api/article', (req, res) => {
-  console.log(req.body)
-  const article = new db.articleModel(req.body, res)
+  const article = new db.articleModel(req.query, res)
   article.save((err, r) => {
     if (err) {
       console.log(err)
+      res.json({msg:err,status:'0'})
     } else {
-      res.json({
-        code: 200,
-        msg:'success',
-        status:'0'
-      })
+      res.json({msg:'success',status:'0'})
     }
   })
 })
 router.delete('/api/article', (req, res) => {
-  console.log(req.body)
-  db.articleModel.remove({_id:req.body.id}, (err, r) => {
+  console.log(req.query)
+  db.articleModel.remove({_id:req.query.id}, (err, r) => {
     if (err) {
       console.log(err)
+      res.json({msg:err,status:'0'})
     } else {
-      res.json({code: 200,msg:'success',status:'0'})
+      res.json({msg:'success',status:'0'})
     }
   })
 })
@@ -47,22 +40,19 @@ router.put('/api/article', (req, res) => {
   db.articleModel.update({_id:req.body.id}, req.body, (err, r) => {
     if (err) {
       console.log(err)
+      res.json({msg:err,status:'0'})
     } else {
-      res.json({code: 200,msg:'success',status:'0'})
+      res.json({msg:'success',status:'0'})
     }
   })
 })
 router.get('/api/users', (req, res, next) => {
   db.userModel.find({}, (err, doc) => {
     if (err) {
-      console.log(err);
+      console.log(err)
+      res.json({msg:err,status:'0'})
     } else {
-      res.json({
-        code: 200,
-        status:'0',
-        msg:'success',
-        data:doc
-      })
+      res.json({status:'0',msg:'success',data:doc})
     }
   })
 })
@@ -74,11 +64,7 @@ router.post('/api/users', (req, res, next) => {
     if (err) {
       console.log(err)
     } else {
-      res.json({
-        code: 200,
-        msg:'success',
-        status:'0'
-      })
+      res.json({msg:'success',status:'0'})
     }
   })
 })
@@ -89,7 +75,7 @@ router.put('/api/users', (req, res) => {
   const id = req.body.id
   db.userModel().findByIdAndUpdate(id, {$set: req.body}).then(res=>{
     res.json({
-      code: 200,
+
       status:'0',
       msg:'success'
     })
@@ -100,7 +86,7 @@ router.put('/api/users', (req, res) => {
   //     console.log(err);
   //   } else {
   //     res.json({
-  //       code: 200,
+  //
   //       status:'0',
   //       msg:'success'
   //     })
@@ -112,14 +98,14 @@ router.put('/api/users', (req, res) => {
   //   } else if (doc) {
   //     users.update((err, r) => {
   //       res.json({
-  //         code: 200,
+  //
   //         status:'0',
   //         msg:'success'
   //       })
   //     })
   //   } else {
   //     res.json({
-  //       code: 200,
+  //
   //       status:'0',
   //       msg:'没有查询到用户',
   //       data:doc
