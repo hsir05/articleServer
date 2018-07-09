@@ -13,7 +13,7 @@ router.get('/api/article', function(req, res, next) {
       }
     })
   } else if (req.query.title) {
-    db.articleModel.find({name:/req.query.title/}, (err, doc) => {
+    db.articleModel.find({ title: { $regex: req.query.title, $options: 'i' }}, (err, doc) => {
       if (err) {
         console.log(err)
         res.json({msg:err,status:'-1'})
@@ -79,11 +79,7 @@ router.post('/api/login', (req, res, next) => {
         res.json({
           status:'0',
           msg:'success',
-          data:{
-            name:doc.name,
-            create_at:doc.create_at,
-            id:doc._id
-          }
+          data:{ name:doc.name, create_at:doc.create_at, id:doc._id }
         })
       } else {
         res.json({ status:'-1', msg:'帐号或密码错误' })
@@ -91,6 +87,7 @@ router.post('/api/login', (req, res, next) => {
     })
   }
 })
+
 router.get('/api/users', (req, res, next) => {
   db.userModel.find({}, (err, doc) => {
     if (err) {
