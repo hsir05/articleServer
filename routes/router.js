@@ -3,54 +3,67 @@ const router = express.Router()
 const db = require('../db')
 
 router.get('/api/article', function(req, res, next) {
-  db.articleModel.find({}, (err, doc) => {
-    if (err) {
-      console.log(err)
-      res.json({msg:err,status:'0'})
-    } else {
-      res.json({status:'0',msg:'success',data:doc})
-    }
-  })
+  if (req.query.id) {
+    db.articleModel.findById({_id:req.query.id}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
+      }
+    })
+  } else {
+    db.articleModel.find({}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
+      }
+    })
+  }
 })
 
 router.post('/api/article', (req, res) => {
-  const article = new db.articleModel(req.query, res)
+  const article = new db.articleModel(req.body, res)
   article.save((err, r) => {
     if (err) {
       console.log(err)
-      res.json({msg:err,status:'0'})
+      res.json({msg:err,status:'-1'})
     } else {
       res.json({msg:'success',status:'0'})
     }
   })
 })
+
 router.delete('/api/article', (req, res) => {
   console.log(req.query)
   db.articleModel.remove({_id:req.query.id}, (err, r) => {
     if (err) {
       console.log(err)
-      res.json({msg:err,status:'0'})
+      res.json({msg:err,status:'-1'})
     } else {
       res.json({msg:'success',status:'0'})
     }
   })
 })
+
 router.put('/api/article', (req, res) => {
-  console.log(req.body)
   db.articleModel.update({_id:req.body.id}, req.body, (err, r) => {
     if (err) {
       console.log(err)
-      res.json({msg:err,status:'0'})
+      res.json({msg:err,status:'-1'})
     } else {
       res.json({msg:'success',status:'0'})
     }
   })
 })
+
 router.get('/api/users', (req, res, next) => {
   db.userModel.find({}, (err, doc) => {
     if (err) {
       console.log(err)
-      res.json({msg:err,status:'0'})
+      res.json({msg:err,status:'-1'})
     } else {
       res.json({status:'0',msg:'success',data:doc})
     }
@@ -63,6 +76,7 @@ router.post('/api/users', (req, res, next) => {
   users.save((err, r) => {
     if (err) {
       console.log(err)
+      res.json({msg:err,status:'-1'})
     } else {
       res.json({msg:'success',status:'0'})
     }
@@ -74,11 +88,7 @@ router.put('/api/users', (req, res) => {
   console.log(req.body);
   const id = req.body.id
   db.userModel().findByIdAndUpdate(id, {$set: req.body}).then(res=>{
-    res.json({
-
-      status:'0',
-      msg:'success'
-    })
+    res.json({status:'0',msg:'success'})
   })
 
   // users.update(id, req.body, (err, r) => {
