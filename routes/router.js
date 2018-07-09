@@ -25,7 +25,6 @@ router.get('/api/article', function(req, res, next) {
     })
   } else {
     let total = 0
-    const start = (parseInt(req.query.page) - 1) * parseInt(req.query.pageSize)
     db.articleModel.count().exec(function (err, count) {
       if (err) {
         console.log(err)
@@ -33,6 +32,9 @@ router.get('/api/article', function(req, res, next) {
         total = count
       }
     })
+
+    const start = (parseInt(req.query.page) - 1) * parseInt(req.query.pageSize)
+
     db.articleModel.find({}).skip(start).limit(req.query.pageSize).populate('').sort(req.query.sort).exec(function (err, doc) {
       if (err) {
         console.log(err)
