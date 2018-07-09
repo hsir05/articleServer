@@ -1,6 +1,8 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../db')
+const dbHelper = require('../dbHelper');
+
 
 router.get('/api/article', function(req, res, next) {
   if (req.query.id) {
@@ -22,12 +24,21 @@ router.get('/api/article', function(req, res, next) {
       }
     })
   } else {
-    db.articleModel.find({}, (err, doc) => {
+    let total = 0
+    const start = (parseInt(req.query.page) - 1) * parseInt(req.query.pageSize)
+    db.articleModel.count().exec(function (err, count) {
+      if (err) {
+        console.log(err)
+      } else {
+        total = count
+      }
+    })
+    db.articleModel.find({}).skip(start).limit(req.query.pageSize).populate('').sort(req.query.sort).exec(function (err, doc) {
       if (err) {
         console.log(err)
         res.json({msg:err,status:'-1'})
       } else {
-        res.json({status:'0',msg:'success',data:doc})
+        res.json({status:'0',msg:'success',data:doc, total:total})
       }
     })
   }
