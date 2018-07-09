@@ -68,18 +68,7 @@ router.put('/api/article', (req, res) => {
 })
 
 // 用户
-router.get('/api/users', (req, res, next) => {
-  db.userModel.find({}, (err, doc) => {
-    if (err) {
-      console.log(err)
-      res.json({msg:err,status:'-1'})
-    } else {
-      res.json({status:'0',msg:'success',data:doc})
-    }
-  })
-})
-
-router.post('/api/users', (req, res, next) => {
+router.post('/api/login', (req, res, next) => {
   console.log(req.body);
   if (req.body.pwd) {
     db.userModel.findOne({name:req.body.name,pwd:req.body.pwd}, (err, doc) => {
@@ -97,23 +86,32 @@ router.post('/api/users', (req, res, next) => {
           }
         })
       } else {
-        res.json({
-          status:'-1',
-          msg:'帐号或密码错误'
-        })
+        res.json({ status:'-1', msg:'帐号或密码错误' })
       }
     })
-  } else {
-    // const users = new db.userModel(req.body, res)
-    // users.save((err, r) => {
-    //   if (err) {
-    //     console.log(err)
-    //     res.json({msg:err,status:'-1'})
-    //   } else {
-    //     res.json({msg:'success',status:'0'})
-    //   }
-    // })
   }
+})
+router.get('/api/users', (req, res, next) => {
+  db.userModel.find({}, (err, doc) => {
+    if (err) {
+      console.log(err)
+      res.json({msg:err,status:'-1'})
+    } else {
+      res.json({status:'0',msg:'success',data:doc})
+    }
+  })
+})
+
+router.post('/api/users', (req, res, next) => {
+  const users = new db.userModel(req.body, res)
+  users.save((err, r) => {
+    if (err) {
+      console.log(err)
+      res.json({msg:err,status:'-1'})
+    } else {
+      res.json({msg:'success',status:'0'})
+    }
+  })
 })
 
 router.put('/api/users', (req, res) => {
