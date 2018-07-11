@@ -16,3 +16,9 @@
  添加`cors`模块解决跨域问题
 
 [参考文章](https://github.com/expressjs/cors)
+
+#### 3.2 limit
+
+```
+limit 如果传值为0时，则对条数不做限制
+```

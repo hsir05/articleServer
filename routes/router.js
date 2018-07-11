@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const db = require('../db')
-const dbHelper = require('../dbHelper');
-
+// const dbHelper = require('../dbHelper.js')
+// console.log('------')
+// console.log(dbHelper.dbOper)
 
 router.get('/api/article', function(req, res, next) {
   if (req.query.id) {
@@ -15,7 +16,7 @@ router.get('/api/article', function(req, res, next) {
       }
     })
   } else if (req.query.title) {
-    db.articleModel.find({ title: { $regex: req.query.title, $options: 'i' }}, (err, doc) => {
+    db.articleModel.find({}).limit(5).exec({ title: { $regex: req.query.title, $options: 'i' }}, (err, doc) => {
       if (err) {
         console.log(err)
         res.json({msg:err,status:'-1'})
@@ -23,7 +24,7 @@ router.get('/api/article', function(req, res, next) {
         res.json({status:'0',msg:'success',data:doc})
       }
     })
-  } else {
+  } else if (req.query.page) {
     let total = 0
     db.articleModel.count().exec(function (err, count) {
       if (err) {
@@ -35,12 +36,21 @@ router.get('/api/article', function(req, res, next) {
 
     const start = (parseInt(req.query.page) - 1) * parseInt(req.query.pageSize)
 
-    db.articleModel.find({}).skip(start).limit(req.query.pageSize).populate('').sort(req.query.sort).exec(function (err, doc) {
+    db.articleModel.find({}).skip(start).limit(parseInt(req.query.pageSize)).populate('').sort(req.query.sort).exec(function (err, doc) {
       if (err) {
         console.log(err)
         res.json({msg:err,status:'-1'})
       } else {
         res.json({status:'0',msg:'success',data:doc, total:total})
+      }
+    })
+  } else {
+    db.articleModel.find({}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
       }
     })
   }
@@ -82,7 +92,6 @@ router.put('/api/article', (req, res) => {
 
 // 用户
 router.post('/api/login', (req, res, next) => {
-  console.log(req.body);
   if (req.body.pwd) {
     db.userModel.findOne({name:req.body.name,pwd:req.body.pwd}, (err, doc) => {
       if (err) {
@@ -102,14 +111,54 @@ router.post('/api/login', (req, res, next) => {
 })
 
 router.get('/api/users', (req, res, next) => {
-  db.userModel.find({}, (err, doc) => {
-    if (err) {
-      console.log(err)
-      res.json({msg:err,status:'-1'})
-    } else {
-      res.json({status:'0',msg:'success',data:doc})
-    }
-  })
+  if (req.query.id) {
+    db.userModel.findById({_id:req.query.id}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
+      }
+    })
+  } else if (req.query.name) {
+    db.userModel.find({}).limit(5).exec({ name: { $regex: req.query.name, $options: 'i' }}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
+      }
+    })
+  } else if (req.query.page) {
+    let total = 0
+    db.userModel.count().exec(function (err, count) {
+      if (err) {
+        console.log(err)
+      } else {
+        total = count
+      }
+    })
+
+    const start = (parseInt(req.query.page) - 1) * parseInt(req.query.pageSize)
+
+    db.userModel.find({}).skip(start).limit(parseInt(req.query.pageSize)).populate('').sort(req.query.sort).exec(function (err, doc) {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc, total:total})
+      }
+    })
+  } else {
+    db.userModel.find({}, (err, doc) => {
+      if (err) {
+        console.log(err)
+        res.json({msg:err,status:'-1'})
+      } else {
+        res.json({status:'0',msg:'success',data:doc})
+      }
+    })
+  }
 })
 
 router.post('/api/users', (req, res, next) => {
